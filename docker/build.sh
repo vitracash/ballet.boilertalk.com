@@ -1,16 +1,7 @@
 #!/bin/bash
 
-# Move tmp files up
-cp docker/Dockerfile ./
-cp docker/nginx-default.conf ./
-
 # Build nginx static website container
-docker build -t ballet-website .
+docker build -t ybrin/ballet-website:latest .
 
-# Remove tmp Dockerfile
-rm Dockerfile
-rm nginx-default.conf
-
-# Push to Google Cloud registry
-docker tag ballet-website us.gcr.io/boilertalk-main/ballet-website
-gcloud docker -- push us.gcr.io/boilertalk-main/boilertalk-website
+# Push to registry
+docker push ybrin/ballet-website:latest
