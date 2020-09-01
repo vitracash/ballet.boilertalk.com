@@ -42,160 +42,171 @@ var gulp        = require('gulp'),
 		clean: './dist'
 	};
 
-gulp.task('clean', function (cb)
-{
+const clean = (cb) => {
 	rimraf(path.clean, cb);
-});
+};
+exports.clean = clean;
 
-gulp.task('html:build', function ()
-{
-	return gulp.src(path.src.html)
-		.pipe(fileinclude({
-			prefix: '@@',
-			basepath: '@file',
-			indent: true
-		}))
-		.pipe(gulp.dest(path.dist.html));
-});
+const htmlBuild = () => {
+	return gulp
+    .src(path.src.html)
+    .pipe(
+      fileinclude({
+        prefix: "@@",
+        basepath: "@file",
+        indent: true,
+      })
+    )
+    .pipe(gulp.dest(path.dist.html));
+};
+exports.htmlBuild = htmlBuild;
 
-gulp.task('pdf:build', function() {
-   return gulp.src(path.src.pdf).pipe(gulp.dest(path.dist.pdf));
-})
+const pdfBuild = () => {
+	return gulp.src(path.src.pdf).pipe(gulp.dest(path.dist.pdf));
+};
+exports.pdfBuild = pdfBuild;
 
-gulp.task('js:build', function ()
-{
-	return gulp.src(path.src.js)
-		.pipe(sourcemaps.init())
-		.pipe(reference())
-		.pipe(gulp.dest(path.dist.js))
-		.pipe(uglify())
-		.pipe(rename({suffix: ".min"}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.dist.js));
-});
+const jsBuild = () => {
+	return gulp
+    .src(path.src.js)
+    .pipe(sourcemaps.init())
+    .pipe(reference())
+    .pipe(gulp.dest(path.dist.js))
+    .pipe(uglify())
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest(path.dist.js));
+};
+exports.jsBuild = jsBuild;
 
-gulp.task('style:build', function ()
-{
-	return gulp.src(path.src.style)
-		.pipe(sourcemaps.init())
-		.pipe(reference())
-		.pipe(sass({outputStyle: 'compact'}).on('error', sass.logError))
-		.pipe(prefixer(['last 25 versions', '> 1%', 'ie 9']))
-		.pipe(cleanCSS({
-			format: 'beautify',
-			level: 2
-		}))
-		.pipe(rename({basename: "style"}))
-		.pipe(gulp.dest(path.dist.style))
-		.pipe(cleanCSS())
-		.pipe(rename({suffix: ".min"}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.dist.style));
-});
+const styleBuild = () => {
+	return gulp
+    .src(path.src.style)
+    .pipe(sourcemaps.init())
+    .pipe(reference())
+    .pipe(sass({ outputStyle: "compact" }).on("error", sass.logError))
+    .pipe(prefixer(["last 25 versions", "> 1%", "ie 9"]))
+    .pipe(
+      cleanCSS({
+        format: "beautify",
+        level: 2,
+      })
+    )
+    .pipe(rename({ basename: "style" }))
+    .pipe(gulp.dest(path.dist.style))
+    .pipe(cleanCSS())
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest(path.dist.style));
+};
+exports.styleBuild = styleBuild;
 
-gulp.task('image:build', function ()
-{
-	return gulp.src(path.src.img)
-		.pipe(imagemin({
-			optimizationLevel: 5,
-			progressive: true,
-			svgoPlugins: [{removeViewBox: false}],
-			use: [pngquant()],
-			interlaced: true
-		}))
-		.pipe(gulp.dest(path.dist.img));
-});
+const imageBuild = () => {
+	return gulp
+    .src(path.src.img)
+    .pipe(
+      imagemin({
+        optimizationLevel: 5,
+        progressive: true,
+        svgoPlugins: [{ removeViewBox: false }],
+        use: [pngquant()],
+        interlaced: true,
+      })
+    )
+    .pipe(gulp.dest(path.dist.img));
+};
+exports.imageBuild = imageBuild;
 
-gulp.task('fonts:build', function()
-{
-	return gulp.src(path.src.fonts)
-		.pipe(gulp.dest(path.dist.fonts))
-});
+const fontsBuild = () => {
+	return gulp.src(path.src.fonts).pipe(gulp.dest(path.dist.fonts));
+};
+exports.fontsBuild = fontsBuild;
 
+const jsDev = () => {
+		return gulp
+      .src(path.src.js)
+      .pipe(sourcemaps.init())
+      .pipe(reference())
+      .pipe(rename({ suffix: ".min" }))
+      .pipe(sourcemaps.write("."))
+      .pipe(gulp.dest(path.dist.js));
+};
+exports.jsDev = jsDev;
 
-gulp.task('js:dev', function ()
-{
-	return gulp.src(path.src.js)
-		.pipe(sourcemaps.init())
-		.pipe(reference())
-		.pipe(rename({suffix: ".min"}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.dist.js));
-});
+const styleDev = () => {
+	return gulp
+    .src(path.src.style)
+    .pipe(sourcemaps.init())
+    .pipe(reference())
+    .pipe(sass().on("error", sass.logError))
+    .pipe(
+      cleanCSS({
+        format: "beautify",
+        level: 2,
+      })
+    )
+    .pipe(
+      rename({
+        basename: "style",
+        suffix: ".min",
+      })
+    )
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest(path.dist.style));
+};
+exports.styleDev = styleDev;
 
-gulp.task('style:dev', function ()
-{
-	return gulp.src(path.src.style)
-		.pipe(sourcemaps.init())
-		.pipe(reference())
-		.pipe(sass().on('error', sass.logError))
-		.pipe(cleanCSS({
-			format: 'beautify',
-			level: 2
-		}))
-		.pipe(rename({
-			basename: "style",
-			suffix: ".min"
-		}))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(path.dist.style));
-});
+const imageDev = () => {
+	return gulp.src(path.src.img).pipe(gulp.dest(path.dist.img));
+};
+exports.imageDev = imageDev;
 
-gulp.task('image:dev', function ()
-{
-	return gulp.src(path.src.img)
-		.pipe(gulp.dest(path.dist.img));
-});
+exports.build = gulp.series(
+  htmlBuild,
+  jsBuild,
+  styleBuild,
+  fontsBuild,
+  imageBuild,
+  pdfBuild
+);
 
-gulp.task('build', [
-	'html:build',
-	'js:build',
-	'style:build',
-	'fonts:build',
-	'image:build',
-	'pdf:build'
-]);
+exports.dev = gulp.series(
+  htmlBuild,
+  jsDev,
+  styleDev,
+  fontsBuild,
+  imageDev,
+  pdfBuild
+);
 
-gulp.task('dev', [
-	'html:build',
-	'js:dev',
-	'style:dev',
-	'fonts:build',
-	'image:dev',
-	'pdf:build'
-]);
+exports.default = gulp.series(clean, exports.build);
 
-gulp.task('default', ['clean'], function ()
-{
-	return gulp.start('build');
-});
+// gulp.task('watch', function (_cb)
+// {
+// 	watch(path.watch.html, function(event, cb)
+// 	{
+// 		gulp.start('html:build');
+// 	});
+// 	watch(path.watch.style, function(event, cb)
+// 	{
+// 		gulp.start('style:dev');
+// 	});
+// 	watch(path.watch.js, function(event, cb)
+// 	{
+// 		gulp.start('js:dev');
+// 	});
+// 	watch(path.watch.img, function(event, cb)
+// 	{
+// 		gulp.start('image:dev');
+// 	});
+// 	watch(path.watch.fonts, function(event, cb)
+// 	{
+// 		gulp.start('fonts:build');
+// 	});
 
-gulp.task('watch', function (_cb)
-{
-	watch(path.watch.html, function(event, cb)
-	{
-		gulp.start('html:build');
-	});
-	watch(path.watch.style, function(event, cb)
-	{
-		gulp.start('style:dev');
-	});
-	watch(path.watch.js, function(event, cb)
-	{
-		gulp.start('js:dev');
-	});
-	watch(path.watch.img, function(event, cb)
-	{
-		gulp.start('image:dev');
-	});
-	watch(path.watch.fonts, function(event, cb)
-	{
-		gulp.start('fonts:build');
-	});
+// 	watch(path.watch.pdf, function(event, cb) {
+// 		gulp.start('pdf:build');
+// 	});
 
-	watch(path.watch.pdf, function(event, cb) {
-		gulp.start('pdf:build');
-	});
-
-	_cb();
-});
+// 	_cb();
+// });
